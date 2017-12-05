@@ -7,3 +7,12 @@ c:\users\sasha\documents\visual studio 2015\Projects\Production System\prodsys\o
 c:\users\sasha\documents\visual studio 2015\Projects\Production System\prodsys\obj\Debug\prodsys.csproj.GenerateResource.Cache
 c:\users\sasha\documents\visual studio 2015\Projects\Production System\prodsys\obj\Debug\prodsys.exe
 c:\users\sasha\documents\visual studio 2015\Projects\Production System\prodsys\obj\Debug\prodsys.pdb
+C:\Users\Sasha\Documents\GitHub\Production System\prodsys\bin\Debug\prodsys.exe.config
+C:\Users\Sasha\Documents\GitHub\Production System\prodsys\obj\Debug\prodsys.exe
+C:\Users\Sasha\Documents\GitHub\Production System\prodsys\obj\Debug\prodsys.pdb
+C:\Users\Sasha\Documents\GitHub\Production System\prodsys\obj\Debug\prodsys.csprojResolveAssemblyReference.cache
+C:\Users\Sasha\Documents\GitHub\Production System\prodsys\obj\Debug\prodsys.Form1.resources
+C:\Users\Sasha\Documents\GitHub\Production System\prodsys\obj\Debug\prodsys.Properties.Resources.resources
+C:\Users\Sasha\Documents\GitHub\Production System\prodsys\obj\Debug\prodsys.csproj.GenerateResource.Cache
+C:\Users\Sasha\Documents\GitHub\Production System\prodsys\bin\Debug\prodsys.exe
+C:\Users\Sasha\Documents\GitHub\Production System\prodsys\bin\Debug\prodsys.pdb

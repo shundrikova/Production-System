@@ -47,8 +47,9 @@ namespace prodsys
             public string info;
             public List<string> left;
             public string right;
+            public int matches;
 
-            public Rule() { }
+            public Rule() { matches = 0; }
 
             public Rule(string id, List<string> left, string right, string info)
             {
@@ -56,6 +57,7 @@ namespace prodsys
                 this.info = info;
                 this.left = left;
                 this.right = right;
+                matches = 0;
             }
 
             public override string ToString()
@@ -163,7 +165,41 @@ namespace prodsys
             for (int i = 0; i < trueFactsLB.Items.Count; ++i)
                 trueFacts.Add((Fact)trueFactsLB.Items[i]);
 
+            List<Fact> resFacts;
+            do
+            {
+                for (int i = 0; i < trueFacts.Count; ++i)
+                    for (int j = 0; j < rules.Count; ++j)
+                        // если встречаем в правой части правила один из достоверных фактов
+                        if (trueFacts[i].id.Equals(rules[j].right))
+                            rules[j].matches -= 1;
+                        else
+                        if (rules[j].left.IndexOf(trueFacts[i].id) != -1)
+                            rules[j].matches += 1;
 
+                resFacts = new List<Fact>();
+                for (int i = 0; i < rules.Count; ++i)
+                {
+                    if (rules[i].matches == rules[i].left.Count)
+                    {
+                        for (int j = 0; j < facts.Count; ++j)
+                            if (facts[j].id == rules[i].right)
+                            {
+                                resFacts.Add((Fact)factsLB.Items[j]);
+                                break;
+                            }
+                        procRulesLB.Items.Add(rules[i].ToString());
+                    }
+                    rules[i].matches = 0;
+                }
+
+                for (int i = 0; i < resFacts.Count; ++i)
+                {
+                    trueFacts.Add(resFacts[i]);
+                    resFactsLB.Items.Add(resFacts[i]);
+                }
+
+            } while (resFacts.Count > 0);
         }
     }
 }
