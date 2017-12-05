@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.factsLB = new System.Windows.Forms.ListBox();
-            this.trueFactsLB = new System.Windows.Forms.ListBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.rulesLB = new System.Windows.Forms.ListBox();
+            this.trueFactsLB = new System.Windows.Forms.ListBox();
             this.knBaseButton = new System.Windows.Forms.Button();
             this.clearButton = new System.Windows.Forms.Button();
             this.forChainButton = new System.Windows.Forms.Button();
@@ -65,6 +65,15 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Facts";
             // 
+            // factsLB
+            // 
+            this.factsLB.FormattingEnabled = true;
+            this.factsLB.Location = new System.Drawing.Point(6, 16);
+            this.factsLB.Name = "factsLB";
+            this.factsLB.Size = new System.Drawing.Size(193, 290);
+            this.factsLB.TabIndex = 0;
+            this.factsLB.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.factsLB_MouseDoubleClick);
+            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.rulesLB);
@@ -75,14 +84,14 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Rules";
             // 
-            // factsLB
+            // rulesLB
             // 
-            this.factsLB.FormattingEnabled = true;
-            this.factsLB.Location = new System.Drawing.Point(6, 16);
-            this.factsLB.Name = "factsLB";
-            this.factsLB.Size = new System.Drawing.Size(193, 290);
-            this.factsLB.TabIndex = 0;
-            this.factsLB.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.factsLB_MouseDoubleClick);
+            this.rulesLB.FormattingEnabled = true;
+            this.rulesLB.HorizontalScrollbar = true;
+            this.rulesLB.Location = new System.Drawing.Point(6, 16);
+            this.rulesLB.Name = "rulesLB";
+            this.rulesLB.Size = new System.Drawing.Size(553, 290);
+            this.rulesLB.TabIndex = 2;
             // 
             // trueFactsLB
             // 
@@ -93,18 +102,9 @@
             this.trueFactsLB.TabIndex = 1;
             this.trueFactsLB.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.trueFactsLB_MouseDoubleClick);
             // 
-            // rulesLB
-            // 
-            this.rulesLB.FormattingEnabled = true;
-            this.rulesLB.HorizontalScrollbar = true;
-            this.rulesLB.Location = new System.Drawing.Point(6, 16);
-            this.rulesLB.Name = "rulesLB";
-            this.rulesLB.Size = new System.Drawing.Size(553, 290);
-            this.rulesLB.TabIndex = 2;
-            // 
             // knBaseButton
             // 
-            this.knBaseButton.Location = new System.Drawing.Point(27, 459);
+            this.knBaseButton.Location = new System.Drawing.Point(18, 459);
             this.knBaseButton.Name = "knBaseButton";
             this.knBaseButton.Size = new System.Drawing.Size(161, 23);
             this.knBaseButton.TabIndex = 1;
@@ -114,7 +114,7 @@
             // 
             // clearButton
             // 
-            this.clearButton.Location = new System.Drawing.Point(27, 488);
+            this.clearButton.Location = new System.Drawing.Point(18, 488);
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(161, 23);
             this.clearButton.TabIndex = 2;
@@ -140,6 +140,7 @@
             this.backChainButton.TabIndex = 4;
             this.backChainButton.Text = "Backward chaining";
             this.backChainButton.UseVisualStyleBackColor = true;
+            this.backChainButton.Click += new System.EventHandler(this.backChainButton_Click);
             // 
             // resFactsLB
             // 

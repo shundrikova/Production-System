@@ -47,9 +47,8 @@ namespace prodsys
             public string info;
             public List<string> left;
             public string right;
-            public int matches;
 
-            public Rule() { matches = 0; }
+            public Rule() { }
 
             public Rule(string id, List<string> left, string right, string info)
             {
@@ -57,7 +56,6 @@ namespace prodsys
                 this.info = info;
                 this.left = left;
                 this.right = right;
-                matches = 0;
             }
 
             public override string ToString()
@@ -168,19 +166,19 @@ namespace prodsys
             List<Fact> resFacts;
             do
             {
-                for (int i = 0; i < trueFacts.Count; ++i)
-                    for (int j = 0; j < rules.Count; ++j)
-                        // если встречаем в правой части правила один из достоверных фактов
-                        if (trueFacts[i].id.Equals(rules[j].right))
-                            rules[j].matches -= 1;
-                        else
-                        if (rules[j].left.IndexOf(trueFacts[i].id) != -1)
-                            rules[j].matches += 1;
-
                 resFacts = new List<Fact>();
                 for (int i = 0; i < rules.Count; ++i)
                 {
-                    if (rules[i].matches == rules[i].left.Count)
+                    int matches = 0;
+                    for (int j = 0; j < trueFacts.Count; ++j)
+                        // если встречаем в правой части правила один из достоверных фактов
+                        if (trueFacts[j].id.Equals(rules[i].right))
+                            --matches;
+                        else
+                            if (rules[i].left.IndexOf(trueFacts[j].id) != -1)
+                                ++matches;
+
+                    if (matches == rules[i].left.Count)
                     {
                         for (int j = 0; j < facts.Count; ++j)
                             if (facts[j].id == rules[i].right)
@@ -190,7 +188,6 @@ namespace prodsys
                             }
                         procRulesLB.Items.Add(rules[i].ToString());
                     }
-                    rules[i].matches = 0;
                 }
 
                 for (int i = 0; i < resFacts.Count; ++i)
@@ -200,6 +197,29 @@ namespace prodsys
                 }
 
             } while (resFacts.Count > 0);
+        }
+
+        private void backChainButton_Click(object sender, EventArgs e)
+        {
+            if (trueFactsLB.Items.Count == 0) return;
+            if (procRulesLB.Items.Count > 0)
+            {
+                int cnt = procRulesLB.Items.Count;
+                for (int i = 0; i < cnt; ++i)
+                    procRulesLB.Items.RemoveAt(0);
+            }
+            if (resFactsLB.Items.Count > 0)
+            {
+                int cnt = resFactsLB.Items.Count;
+                for (int i = 0; i < cnt; ++i)
+                    resFactsLB.Items.RemoveAt(0);
+            }
+
+            List<Fact> trueFacts = new List<Fact>();
+            for (int i = 0; i < trueFactsLB.Items.Count; ++i)
+                trueFacts.Add((Fact)trueFactsLB.Items[i]);
+
+            string fact_id = textBox1.Text.ToString();
         }
     }
 }
