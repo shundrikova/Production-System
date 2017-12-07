@@ -16,6 +16,8 @@ namespace prodsys
         private string file;
         List<Fact> facts;
         List<Rule> rules;
+        List<Fact> trueFacts;
+        List<string> goals;
 
         public Form1()
         {
@@ -26,8 +28,6 @@ namespace prodsys
         {
             public string id;
             public string info;
-
-            public Fact() { }
 
             public Fact(string id, string info)
             {
@@ -47,8 +47,6 @@ namespace prodsys
             public string info;
             public List<string> left;
             public string right;
-
-            public Rule() { }
 
             public Rule(string id, List<string> left, string right, string info)
             {
@@ -134,6 +132,8 @@ namespace prodsys
             cnt = resFactsLB.Items.Count;
             for (int i = 0; i < cnt; ++i)
                 resFactsLB.Items.RemoveAt(0);
+
+            label3.Text = "";
         }
 
         private void trueFactsLB_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -146,6 +146,7 @@ namespace prodsys
         private void forChainButton_Click(object sender, EventArgs e)
         {
             if (trueFactsLB.Items.Count == 0) return;
+            label3.Text = "";
             if (procRulesLB.Items.Count > 0)
             {
                 int cnt = procRulesLB.Items.Count;
@@ -159,7 +160,7 @@ namespace prodsys
                     resFactsLB.Items.RemoveAt(0);
             }
 
-            List<Fact> trueFacts = new List<Fact>();
+            trueFacts = new List<Fact>();
             for (int i = 0; i < trueFactsLB.Items.Count; ++i)
                 trueFacts.Add((Fact)trueFactsLB.Items[i]);
 
@@ -174,7 +175,7 @@ namespace prodsys
                         // если встречаем в правой части правила один из достоверных фактов
                         if (trueFacts[j].id.Equals(rules[i].right))
                             --matches;
-                        else
+                        else 
                             if (rules[i].left.IndexOf(trueFacts[j].id) != -1)
                                 ++matches;
 
@@ -199,9 +200,44 @@ namespace prodsys
             } while (resFacts.Count > 0);
         }
 
+        private bool derive(string fid)
+        {
+            for(int i = 0; i < trueFacts.Count; ++i)
+                if (trueFacts[i].id == fid)
+                    return true;
+            if (!goals.Contains(fid))
+                goals.Add(fid);
+            else
+                return false;
+            for (int i = 0; i < rules.Count; ++i)
+                if (rules[i].right == fid) // если нашли правило с данным фактом справа
+                {
+                    int cnt = 0;
+                    for (int j = 0; j < rules[i].left.Count; ++j) // проверяем выодимы ли левые факты
+                    {
+                        if (derive(rules[i].left[j]))
+                        {
+                            ++cnt;
+                        }
+                            
+                    }
+                    if(cnt == rules[i].left.Count)
+                    {
+                        procRulesLB.Items.Add(rules[i]);
+                        return true;
+                    }
+                }
+            return false;
+        }
+
         private void backChainButton_Click(object sender, EventArgs e)
         {
             if (trueFactsLB.Items.Count == 0) return;
+
+            string fact_id = textBox1.Text.ToString();
+            if (fact_id == "") return;
+
+            label3.Text = "";
             if (procRulesLB.Items.Count > 0)
             {
                 int cnt = procRulesLB.Items.Count;
@@ -215,11 +251,15 @@ namespace prodsys
                     resFactsLB.Items.RemoveAt(0);
             }
 
-            List<Fact> trueFacts = new List<Fact>();
+            trueFacts = new List<Fact>();
             for (int i = 0; i < trueFactsLB.Items.Count; ++i)
                 trueFacts.Add((Fact)trueFactsLB.Items[i]);
 
-            string fact_id = textBox1.Text.ToString();
+            goals = new List<string>();
+            bool derivable = derive(fact_id);
+            if (!derivable)
+                label3.Text = fact_id + " is not derivable!";
+                //MessageBox.Show(fact_id + " is not derivable!");
         }
     }
 }
