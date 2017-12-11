@@ -28,6 +28,7 @@ namespace prodsys
         {
             public string id;
             public string info;
+            public double cfactor = 0.0;
 
             public Fact(string id, string info)
             {
@@ -35,11 +36,22 @@ namespace prodsys
                 this.info = info;
             }
 
+            public Fact(Fact f)
+            {
+                id = f.id;
+                info = f.info;
+                cfactor = f.cfactor;
+            }
+
             public override string ToString()
             {
-                return id + ": " + info;
+                if (cfactor != 0.0)
+                    return id + ": " + info + ", " + cfactor.ToString();
+                else
+                    return id + ": " + info;
             }
-        }
+
+    }
 
         public class Rule
         {
@@ -47,13 +59,15 @@ namespace prodsys
             public string info;
             public List<string> left;
             public string right;
+            public double cfactor = 0.0;
 
-            public Rule(string id, List<string> left, string right, string info)
+            public Rule(string id, List<string> left, string right, double cfactor, string info)
             {
                 this.id = id;
                 this.info = info;
                 this.left = left;
                 this.right = right;
+                this.cfactor = cfactor;
             }
 
             public override string ToString()
@@ -64,7 +78,7 @@ namespace prodsys
                     left_side += left[i] + ", ";
                 }
                 left_side += left[left.Count - 1];
-                return id + ": " + left_side + " -> " + right + " " + info;
+                return id + ": " + left_side + " -> " + right + " " + info + ", " + cfactor.ToString();
             }
         }
 
@@ -104,8 +118,8 @@ namespace prodsys
                         List<string> left = new List<string>();
                         for (int i = 0; i < left_side.Length; i++)
                             left.Add(left_side[i]);
-                        rules.Add(new Rule(chunks[0], left, chunks[2], chunks[3]));
-                        rulesLB.Items.Add(new Rule(chunks[0], left, chunks[2], chunks[3]));
+                        rules.Add(new Rule(chunks[0], left, chunks[2], Double.Parse(chunks[3]), chunks[4]));
+                        rulesLB.Items.Add(new Rule(chunks[0], left, chunks[2], Double.Parse(chunks[3]), chunks[4]));
                     }
                 }
                 sr.Close();
@@ -167,24 +181,33 @@ namespace prodsys
             List<Fact> resFacts;
             do
             {
+
                 resFacts = new List<Fact>();
                 for (int i = 0; i < rules.Count; ++i)
                 {
                     int matches = 0;
+                    double min = Double.MaxValue;
                     for (int j = 0; j < trueFacts.Count; ++j)
                         // если встречаем в правой части правила один из достоверных фактов
                         if (trueFacts[j].id.Equals(rules[i].right))
                             --matches;
                         else 
                             if (rules[i].left.IndexOf(trueFacts[j].id) != -1)
-                                ++matches;
+                        {
+                            if (trueFacts[j].cfactor < min)
+                                min = trueFacts[j].cfactor;
+                            ++matches;
+                        }
+                                
 
                     if (matches == rules[i].left.Count)
                     {
                         for (int j = 0; j < facts.Count; ++j)
                             if (facts[j].id == rules[i].right)
                             {
-                                resFacts.Add((Fact)factsLB.Items[j]);
+                                Fact f = new Fact((Fact)factsLB.Items[j]);
+                                f.cfactor = min * rules[i].cfactor;
+                                resFacts.Add(f);
                                 break;
                             }
                         procRulesLB.Items.Add(rules[i].ToString());
@@ -213,17 +236,21 @@ namespace prodsys
                 if (rules[i].right == fid) // если нашли правило с данным фактом справа
                 {
                     int cnt = 0;
-                    for (int j = 0; j < rules[i].left.Count; ++j) // проверяем выодимы ли левые факты
+                    for (int j = 0; j < rules[i].left.Count; ++j) // проверяем выводимы ли левые факты
                     {
                         if (derive(rules[i].left[j]))
-                        {
                             ++cnt;
-                        }
                             
                     }
                     if(cnt == rules[i].left.Count)
                     {
                         procRulesLB.Items.Add(rules[i]);
+                        for (int j = 0; j < facts.Count; ++j)
+                            if (facts[j].id == rules[i].right)
+                            {
+                                trueFacts.Add(facts[j]);
+                                break;
+                            }
                         return true;
                     }
                 }
@@ -260,6 +287,18 @@ namespace prodsys
             if (!derivable)
                 label3.Text = fact_id + " is not derivable!";
                 //MessageBox.Show(fact_id + " is not derivable!");
+        }
+
+        private void conFactorBtton_Click(object sender, EventArgs e)
+        {
+            if (trueFactsLB.SelectedIndex == -1) return;
+            Fact f = new Fact((Fact)trueFactsLB.SelectedItem);
+            try { f.cfactor = Double.Parse(textBox2.Text.ToString()); }
+            catch { MessageBox.Show("Write double with comma!"); }
+            int ind = trueFactsLB.Items.IndexOf(trueFactsLB.SelectedItem);
+            trueFactsLB.Items.RemoveAt(ind);
+            trueFactsLB.Items.Insert(ind, f);
+            trueFactsLB.SelectedIndex = ind;
         }
     }
 }

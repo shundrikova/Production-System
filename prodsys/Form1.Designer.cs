@@ -211,15 +211,15 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(586, 464);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(94, 13);
+            this.label2.Size = new System.Drawing.Size(81, 13);
             this.label2.TabIndex = 9;
-            this.label2.Text = "Сonfidence factor:";
+            this.label2.Text = "Сertainty factor:";
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(686, 459);
+            this.textBox2.Location = new System.Drawing.Point(673, 459);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(96, 20);
+            this.textBox2.Size = new System.Drawing.Size(109, 20);
             this.textBox2.TabIndex = 10;
             // 
             // conFactorBtton
@@ -230,6 +230,7 @@
             this.conFactorBtton.TabIndex = 11;
             this.conFactorBtton.Text = "Add";
             this.conFactorBtton.UseVisualStyleBackColor = true;
+            this.conFactorBtton.Click += new System.EventHandler(this.conFactorBtton_Click);
             // 
             // label3
             // 
