@@ -46,12 +46,11 @@ namespace prodsys
             public override string ToString()
             {
                 if (cfactor != 0.0)
-                    return id + ": " + info + ", " + cfactor.ToString();
+                    return id + ": " + info + ", " + Math.Round(cfactor, 4).ToString();
                 else
                     return id + ": " + info;
             }
-
-    }
+        }
 
         public class Rule
         {
@@ -78,7 +77,7 @@ namespace prodsys
                     left_side += left[i] + ", ";
                 }
                 left_side += left[left.Count - 1];
-                return id + ": " + left_side + " -> " + right + " " + info + ", " + cfactor.ToString();
+                return id + ": " + left_side + " -> " + right + " " + info + ", " + Math.Round(cfactor, 4).ToString();
             }
         }
 
@@ -157,6 +156,24 @@ namespace prodsys
                 trueFactsLB.Items.RemoveAt(ind);
         }
 
+        private void calcCombinedCF(ref Fact f, ref List<Fact> lf)
+        {
+            for (int i = 0; i < lf.Count; ++i)
+            {
+                if (lf[i].id == f.id)
+                {
+                    if (lf[i].cfactor > 0 && f.cfactor > 0)
+                        f.cfactor += lf[i].cfactor * (1 - f.cfactor);
+                    if (lf[i].cfactor < 0 || f.cfactor < 0)
+                        f.cfactor = (f.cfactor + lf[i].cfactor) /
+                            (1 - Math.Min(Math.Abs(f.cfactor), Math.Abs(lf[i].cfactor)));
+                    if (lf[i].cfactor < 0 && f.cfactor < 0)
+                        f.cfactor += lf[i].cfactor * (1 + f.cfactor);
+                    lf.RemoveAt(i);
+                }
+            }
+        }
+
         private void forChainButton_Click(object sender, EventArgs e)
         {
             if (trueFactsLB.Items.Count == 0) return;
@@ -181,7 +198,6 @@ namespace prodsys
             List<Fact> resFacts;
             do
             {
-
                 resFacts = new List<Fact>();
                 for (int i = 0; i < rules.Count; ++i)
                 {
@@ -207,6 +223,7 @@ namespace prodsys
                             {
                                 Fact f = new Fact((Fact)factsLB.Items[j]);
                                 f.cfactor = min * rules[i].cfactor;
+                                calcCombinedCF(ref f, ref resFacts);
                                 resFacts.Add(f);
                                 break;
                             }
@@ -216,8 +233,15 @@ namespace prodsys
 
                 for (int i = 0; i < resFacts.Count; ++i)
                 {
-                    trueFacts.Add(resFacts[i]);
-                    resFactsLB.Items.Add(resFacts[i]);
+                    Fact f = resFacts[i];
+                    calcCombinedCF(ref f, ref trueFacts);
+                    for (int j = 0; j < resFactsLB.Items.Count; ++j)
+                    {
+                        if (resFacts[i].id == ((Fact)resFactsLB.Items[j]).id)
+                            resFactsLB.Items.RemoveAt(j);
+                    }
+                    trueFacts.Add(f);
+                    resFactsLB.Items.Add(f);
                 }
 
             } while (resFacts.Count > 0);
