@@ -247,7 +247,7 @@ namespace prodsys
             } while (resFacts.Count > 0);
         }
 
-        private bool derive(string fid)
+        private bool derive(string fid, ref double cf)
         {
             for(int i = 0; i < trueFacts.Count; ++i)
                 if (trueFacts[i].id == fid)
@@ -262,8 +262,15 @@ namespace prodsys
                     int cnt = 0;
                     for (int j = 0; j < rules[i].left.Count; ++j) // проверяем выводимы ли левые факты
                     {
-                        if (derive(rules[i].left[j]))
+                        if (derive(rules[i].left[j], ref cf))
+                        {
+                            for(int k = 0; k < trueFacts.Count; ++k)
+                                if(trueFacts[k].id == rules[i].left[j])
+                                    if (trueFacts[k].cfactor < cf)
+                                        cf = trueFacts[k].cfactor;
                             ++cnt;
+                        }
+                            
                             
                     }
                     if(cnt == rules[i].left.Count)
@@ -272,7 +279,9 @@ namespace prodsys
                         for (int j = 0; j < facts.Count; ++j)
                             if (facts[j].id == rules[i].right)
                             {
-                                trueFacts.Add(facts[j]);
+                                Fact f = new Fact((Fact)factsLB.Items[j]);
+                                f.cfactor = cf * rules[i].cfactor;
+                                trueFacts.Add(f);
                                 break;
                             }
                         return true;
@@ -307,10 +316,16 @@ namespace prodsys
                 trueFacts.Add((Fact)trueFactsLB.Items[i]);
 
             goals = new List<string>();
-            bool derivable = derive(fact_id);
+            double cf = Double.MaxValue;
+            bool derivable = derive(fact_id, ref cf);
             if (!derivable)
                 label3.Text = fact_id + " is not derivable!";
                 //MessageBox.Show(fact_id + " is not derivable!");
+            for(int i = 0; i < trueFacts.Count; ++i)
+            {
+                if (trueFacts[i].id == fact_id)
+                    resFactsLB.Items.Add(new Fact(trueFacts[i]));
+            }
         }
 
         private void conFactorBtton_Click(object sender, EventArgs e)
